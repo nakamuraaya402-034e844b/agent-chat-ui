@@ -149,9 +149,13 @@ export const StreamProvider: React.FC<{ children: ReactNode }> = ({
     process.env.NEXT_PUBLIC_ASSISTANT_ID;
   const envAuthScheme: string | undefined = process.env.NEXT_PUBLIC_AUTH_SCHEME;
 
+  const resolvedEnvApiUrl =
+    envApiUrl?.startsWith("/") && typeof window !== "undefined"
+      ? window.location.origin + envApiUrl
+      : envApiUrl;
   // Use URL params with env var fallbacks
   const [apiUrl, setApiUrl] = useQueryState("apiUrl", {
-    defaultValue: envApiUrl || "",
+    defaultValue: resolvedEnvApiUrl || "",
   });
   const [assistantId, setAssistantId] = useQueryState("assistantId", {
     defaultValue: envAssistantId || "",
@@ -177,7 +181,7 @@ export const StreamProvider: React.FC<{ children: ReactNode }> = ({
   };
 
   // Determine final values to use, prioritizing URL params then env vars
-  const finalApiUrl = apiUrl || envApiUrl;
+  const finalApiUrl = apiUrl || resolvedEnvApiUrl;
   const finalAssistantId = assistantId || envAssistantId;
   const finalAuthScheme = authScheme || envAuthScheme || "";
 

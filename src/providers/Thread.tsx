@@ -39,8 +39,12 @@ export function ThreadProvider({ children }: { children: ReactNode }) {
     process.env.NEXT_PUBLIC_ASSISTANT_ID;
   const envAuthScheme: string | undefined = process.env.NEXT_PUBLIC_AUTH_SCHEME;
 
+  const resolvedEnvApiUrl =
+    envApiUrl?.startsWith("/") && typeof window !== "undefined"
+      ? window.location.origin + envApiUrl
+      : envApiUrl;
   const [apiUrl] = useQueryState("apiUrl", {
-    defaultValue: envApiUrl || "",
+    defaultValue: resolvedEnvApiUrl || "",
   });
   const [assistantId] = useQueryState("assistantId");
   const [authScheme] = useQueryState("authScheme", {
